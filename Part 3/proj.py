@@ -1,6 +1,8 @@
 #NEW VERSION
 import sqlite3
 from sqlite3 import Error
+import sys
+
 
 def create_connection(db_file):
     """
@@ -9,7 +11,15 @@ def create_connection(db_file):
     :param db_file: database file
     :return: Connection object or None
     """
-    conn = sqlite3.connect(db_file)
+
+    conn = None
+
+    try:
+        conn = sqlite3.connect(db_file)
+        return conn
+    except Error as e:
+        print (e)
+
     return conn
 
 def create_table(conn, create_table_sql):
@@ -40,9 +50,9 @@ def main():
     sql_create_Site_table = """CREATE TABLE IF NOT EXISTS Site ( 
                                     siteCode INTEGER PRIMARY KEY,
                                     type VARCHAR(16),
-                                    CHECK (type IN ('bar', 'restaurant')),
-                                    address VARCHAR(50),
-                                    phone VARCHAR(16));"""
+                                    addr VARCHAR(50),
+                                    phone VARCHAR(16),
+                                    CHECK (type IN ('bar', 'restaurant')));"""
 
     sql_create_DigitalDisplay_table = """CREATE TABLE IF NOT EXISTS DigitalDisplay ( 
                                     serialNo CHAR(10) PRIMARY KEY,
@@ -54,7 +64,7 @@ def main():
                                     clientId INTEGER PRIMARY KEY,
                                     name VARCHAR(40),
                                     phone VARCHAR(16),
-                                    address VARCHAR(50));"""
+                                    addr VARCHAR(50));"""
 
     sql_create_TechnicalSupport_table = """CREATE TABLE IF NOT EXISTS TechnicalSupport (
                                     empId INTEGER PRIMARY KEY,
@@ -153,9 +163,6 @@ def main():
     else:
         print("Error! cannot create the database connection.")
 
+
 if __name__ == '__main__':
-   main()
-
-
-#if __name__ == '__main__':
-#   main()
+    main()
