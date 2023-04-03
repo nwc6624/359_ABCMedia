@@ -1,2 +1,2 @@
 
-Noah Caulfield- Creaded proj.py and initial framework. Helped with query construction.
+Noah Caulfield- Created proj.py file and initial framework. Helped with query construction.
