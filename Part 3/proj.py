@@ -136,8 +136,65 @@ def main():
                                                     FOREIGN KEY (siteCode) REFERENCES Site (siteCode));"""
 
 
+def query_one(db_file, street_name):
 
-    # create a database connection
+    conn = creat_connection(db_file)
+    
+    cur = conn.cursor()
+    cur.execute('Select * FROM Site WHERE address LIKE ?',('%{}%'.format(street_name),))
+    
+    rows = cur.fetchall()
+    
+    for row in rows:
+        print("site code: ", row[0])
+        print("type: ", row[1])
+        print("address:, row[2])
+        print("phone number: row[3]); 
+        print("\n")
+        
+def query_two(db_file, scheduler_system):
+
+    conn = create_connection(db_file)
+    cursor1 = conn.cursor()
+    cursor2 = conn.cursor()
+    cursor3 = conn.cursor()
+    
+    cursor1.execure('SElECT serialNo,modelNo FROM DigitalDisplay WHERE SchedulerSystem=?', ('{}'.format(scheduler_system),))
+    disgital_display_rows = cursor1.fetchall()
+    for dd_row in digital_display_rows:
+        print("Serial Number: ", dd_row[0])
+        print("Model Number: ", dd_row[1])
+        cursor2.execute('SElECT empID from Specializes WHERE mobelNo=?',('{}'.format(dd_row[1]),))
+        specializes_rows = cursor2.fetchall()
+        for s_row in specializes_rows:
+        cursor3.execute('SELECT name FROM TechnicalSupport WHERE empId=?',('{}'.format(s_row[0]),))
+        ts_rows = cursor3.fetchall()
+        for ts_row in ts_rows:
+            print("Technical Support Who Specializes in this model: ", ts_row[0])
+    print("\n")
+    
+def query_three(db_file):
+    
+    conn = Create_connection(db_file)
+    
+    cursor1 = conn.cursor()
+    cursor2 = conn.cursor()
+    cursor3 = conn.cursor()
+    
+    cursor1.execute('SELECT DISTINCT name FROM Salesman')
+    
+    name_rows = cursor1.fetchall()
+    print("Name            cnt")
+    print("___________________")
+    for n_row in name_rows:
+    cursor2.execute('SELECT COUNT(name) FROM Salesman WHERE name=?', ('{}'.formate(n_row[0]),))
+    count_row = cursor2.fetchone();
+    cursor3.execute('SELECT * FROM Salesmen WHERE name=?', ('{}'.format(n_row[0]),))
+    name_rows = cursor3.fetchall()
+    print(n_row[0], "\t\t", count_row[0], name_rows)
+print("\n")
+   
+# create a database connection
     conn = create_connection(database)
 
     if conn is not None:
