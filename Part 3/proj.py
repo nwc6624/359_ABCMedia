@@ -32,7 +32,30 @@ def create_table(conn, create_table_sql):
     c = conn.cursor()
     c.execute(create_table_sql)
 
-def main():
+def question1(conn):
+    # Count the number of distinct site codes in the Locates table
+    c = conn.cursor()
+    c.execute("SELECT COUNT(DISTINCT siteCode) FROM Locates")
+    result = c.fetchone()[0]
+    print(f"There are {result} distinct site codes in the Locates table.")
+
+
+def question2(conn, model_no):
+    # Retrieve the weight of the given model number from the Model table
+    c = conn.cursor()
+    c.execute(f"SELECT weight FROM Model WHERE modelNo = '{model_no}'")
+    result = c.fetchone()[0]
+    print(f"The weight of Model {model_no} is {result}.")
+
+def question3(conn, site_code):
+    # Retrieve the number of digital displays located at the given site code
+    c = conn.cursor()
+    c.execute(f"SELECT COUNT(serialNo) FROM Locates WHERE siteCode = {site_code}")
+    result = c.fetchone()[0]
+    print(f"There are {result} digital displays located at Site {site_code}.")
+
+
+def main(question_num):
     database = r"ABCFull.db"
 
     sql_create_Video_table = """CREATE TABLE IF NOT EXISTS Video (
@@ -136,65 +159,8 @@ def main():
                                                     FOREIGN KEY (siteCode) REFERENCES Site (siteCode));"""
 
 
-def query_one(db_file, street_name):
 
-    conn = creat_connection(db_file)
-    
-    cur = conn.cursor()
-    cur.execute('Select * FROM Site WHERE address LIKE ?',('%{}%'.format(street_name),))
-    
-    rows = cur.fetchall()
-    
-    for row in rows:
-        print("site code: ", row[0])
-        print("type: ", row[1])
-        print("address:, row[2])
-        print("phone number: row[3]); 
-        print("\n")
-        
-def query_two(db_file, scheduler_system):
-
-    conn = create_connection(db_file)
-    cursor1 = conn.cursor()
-    cursor2 = conn.cursor()
-    cursor3 = conn.cursor()
-    
-    cursor1.execure('SElECT serialNo,modelNo FROM DigitalDisplay WHERE SchedulerSystem=?', ('{}'.format(scheduler_system),))
-    disgital_display_rows = cursor1.fetchall()
-    for dd_row in digital_display_rows:
-        print("Serial Number: ", dd_row[0])
-        print("Model Number: ", dd_row[1])
-        cursor2.execute('SElECT empID from Specializes WHERE mobelNo=?',('{}'.format(dd_row[1]),))
-        specializes_rows = cursor2.fetchall()
-        for s_row in specializes_rows:
-        cursor3.execute('SELECT name FROM TechnicalSupport WHERE empId=?',('{}'.format(s_row[0]),))
-        ts_rows = cursor3.fetchall()
-        for ts_row in ts_rows:
-            print("Technical Support Who Specializes in this model: ", ts_row[0])
-    print("\n")
-    
-def query_three(db_file):
-    
-    conn = Create_connection(db_file)
-    
-    cursor1 = conn.cursor()
-    cursor2 = conn.cursor()
-    cursor3 = conn.cursor()
-    
-    cursor1.execute('SELECT DISTINCT name FROM Salesman')
-    
-    name_rows = cursor1.fetchall()
-    print("Name            cnt")
-    print("___________________")
-    for n_row in name_rows:
-    cursor2.execute('SELECT COUNT(name) FROM Salesman WHERE name=?', ('{}'.formate(n_row[0]),))
-    count_row = cursor2.fetchone();
-    cursor3.execute('SELECT * FROM Salesmen WHERE name=?', ('{}'.format(n_row[0]),))
-    name_rows = cursor3.fetchall()
-    print(n_row[0], "\t\t", count_row[0], name_rows)
-print("\n")
-   
-# create a database connection
+    # create a database connection
     conn = create_connection(database)
 
     if conn is not None:
@@ -215,11 +181,23 @@ print("\n")
         create_table(conn, sql_create_Purchases_table)
         create_table(conn, sql_create_Locates_table)
 
-        # close database connection
-        conn.close()
+     
+        if question_num == "1":
+            question1(conn)
+        elif question_num == "2":
+            model_no = input("Enter model number: ")
+            question2(conn, model_no)
+        elif question_num == "3":
+            site_code = input("Enter site code: ")
+            question3(conn, site_code)
+        else:
+            print("Invalid question number.")
     else:
         print("Error! cannot create the database connection.")
 
+        # close database connection
+        conn.close()
 
 if __name__ == '__main__':
-    main()
+    question_num = input("Enter question number (1-3): ")
+    main(question_num)
