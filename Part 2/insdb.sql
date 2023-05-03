@@ -16,19 +16,19 @@ VALUES
 
 INSERT INTO Site (siteCode, type, address, phone)
 VALUES
-  (111, 'Retail', '123 Main St', '5551234'),
-  (112, 'Office', '456 Oak Ave', '5555678'),
-  (113, 'Restaurant', '789 Pine Rd', '5559012'),
-  (114, 'Hotel', '111 Elm St', '5553456'),
-  (115, 'Park', '222 Maple Ave', '5557890');
+  (111, 'bar', '123 Main St', '5551234'),
+  (112, 'bar', '456 Oak Ave', '5555678'),
+  (113, 'restaurant', '789 Pine Rd', '5559012'),
+  (114, 'restaurant', '111 Elm St', '5553456'),
+  (115, 'bar', '222 Maple Ave', '5557890');
 
 INSERT INTO DigitalDisplay (serialNo, schedulerSystem, modelNo)
 VALUES 
-('1234567890', 'SchedulerA', ‘M001’),
-('0987654321', 'SchedulerB', ‘M002’),
-('ABCDEF1234', 'SchedulerA', ‘M003’),
-('CBA9876543', 'SchedulerB', ‘M004’),
-('XYZ1234567', 'SchedulerC', ‘M005’);
+('1234567890', 'Random', 'M000000001'),
+('0987654321', 'Smart', 'M000000002'),
+('ABCDEF1234', 'Smart', 'M000000003'),
+('CBA9876543', 'Random', 'M000000004'),
+('XYZ1234567', 'Virtue', 'M000000005');
 
 INSERT INTO Client (clientId, name, phone, address)
 VALUES
@@ -96,11 +96,11 @@ VALUES
 
 INSERT INTO Specializes (empId, modelNo)
 VALUES 
-(1001, ‘M001),
-(2001, 'M002'),
-(3001, 'M003'),
-(4001, 'M004'),
-(5001, 'M005');
+(1001, 'M000000001'),
+(2001, 'M000000002'),
+(3001, 'M000000003'),
+(4001, 'M000000004'),
+(5001, 'M000000005');
 
 INSERT INTO Purchases (clientId, empId, packageId, commissionRate)
 VALUES 
@@ -109,10 +109,3 @@ VALUES
 (13, 403, 3, 0.07),
 (14, 404, 4, 0.08),
 (15, 405, 5, 0.09);
-
-
-
-
-
-
-
