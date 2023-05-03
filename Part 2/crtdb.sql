@@ -53,7 +53,7 @@ CREATE TABLE Salesman (
 
 CREATE TABLE AirtimePackage (
     packageId INTEGER PRIMARY KEY,
-    class VARCHAR(16) CHECK (class IN ('economy', 'whole day', 'golden hours')),
+    class VARCHAR(16) CHECK (class IN ('Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond')),
     startDate DATE,
     lastDate DATE,
     frequency INTEGER,
