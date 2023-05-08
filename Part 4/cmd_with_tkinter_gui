@@ -1,0 +1,147 @@
+import sqlite3
+from contextlib import closing
+import tkinter as tk
+from tkinter import messagebox, simpledialog
+
+def connect_to_database(database_name):
+    try:
+        conn = sqlite3.connect(database_name)
+        print("Connected to database successfully!")
+        return conn
+    except sqlite3.Error as e:
+        print(f"Failed to connect to database: {e}")
+        return None
+
+class DigitalDisplayApp(tk.Tk):
+    def __init__(self):
+        super().__init__()
+
+        self.title("Digital Display Manager")
+        self.geometry("400x300")
+
+        self.conn = None
+
+        self.create_widgets()
+
+    def create_widgets(self):
+        options_frame = tk.Frame(self)
+        options_frame.pack(pady=10)
+
+        tk.Button(options_frame, text="1. Display all the digital displays.", command=self.display_all_displays).pack(fill=tk.X, pady=2)
+        tk.Button(options_frame, text="2. Search digital displays given a scheduler system.", command=self.search_by_scheduler).pack(fill=tk.X, pady=2)
+        tk.Button(options_frame, text="3. Insert a new digital display.", command=self.insert_display).pack(fill=tk.X, pady=2)
+        tk.Button(options_frame, text="4. Delete a digital display.", command=self.delete_display).pack(fill=tk.X, pady=2)
+        tk.Button(options_frame, text="5. Update a digital display.", command=self.update_display).pack(fill=tk.X, pady=2)
+        tk.Button(options_frame, text="6. Quit.", command=self.quit_app).pack(fill=tk.X, pady=2)
+
+    def display_all_displays(self):
+        with closing(self.conn.cursor()) as c:
+            c.execute("SELECT * FROM DigitalDisplay")
+            rows = c.fetchall()
+
+        for row in rows:
+            print(row)
+
+        choice = messagebox.askyesno("Model Details", "Do you want to see the model details of a display?")
+        if choice:
+            self.display_model_details()
+
+    def display_model_details(self):
+        serial_no = simpledialog.askstring("Serial Number", "Enter the serial number of the display:")
+
+        with closing(self.conn.cursor()) as c:
+            c.execute("""
+                SELECT Model.* FROM Model, DigitalDisplay 
+                WHERE DigitalDisplay.modelNo = Model.modelNo AND DigitalDisplay.serialNo = ?
+            """, (serial_no,))
+            rows = c.fetchall()
+
+        for row in rows:
+            print(row)
+
+    def search_by_scheduler(self):
+        scheduler_system = simpledialog.askstring("Scheduler System", "Enter the scheduler system to search for:")
+
+        with closing(self.conn.cursor()) as c:
+            c.execute("SELECT * FROM DigitalDisplay WHERE schedulerSystem = ?", (scheduler_system,))
+            rows = c.fetchall()
+
+        for row in rows:
+            print(row)
+
+    def insert_display(self):
+        model_no = simpledialog.askstring("Model Number", "Enter the model number of the display:")
+        scheduler_system = simpledialog.askstring("Scheduler System", "Enter the scheduler system of the display:")
+        serial_no = simpledialog.askstring("Serial Number", "Enter the serial number of the display:")
+
+        with closing(self.conn.cursor()) as c:
+            c.execute("""
+                INSERT INTO DigitalDisplay (serialNo, schedulerSystem, modelNo) VALUES (?, ?, ?)
+            """, (serial_no, scheduler_system, model_no))
+            self.conn.commit()
+
+        self.display_all_displays()
+
+    def delete_display(self):
+        self.display_all_displays()
+
+        serial_no = simpledialog.askstring("Serial Number", "Enter the serial number of the display to delete:")
+        model_no = ""
+
+
+
+    def delete_display(self):
+        self.display_all_displays()
+
+        serial_no = simpledialog.askstring("Serial Number", "Enter the serial number of the display to delete:")
+        model_no = ""
+
+        with closing(self.conn.cursor()) as c:
+            c.execute("SELECT modelNo FROM DigitalDisplay WHERE serialNo = ?", (serial_no,))
+            model_no = c.fetchone()[0]
+
+            c.execute("DELETE FROM DigitalDisplay WHERE serialNo = ?", (serial_no,))
+            self.conn.commit()
+
+            c.execute("SELECT COUNT(*) FROM DigitalDisplay WHERE modelNo = ?", (model_no,))
+            count = c.fetchone()[0]
+
+            if count == 0:
+                c.execute("DELETE FROM Model WHERE modelNo = ?", (model_no,))
+                self.conn.commit()
+                print("Model deleted successfully!")
+
+        self.display_all_displays()
+
+    def update_display(self):
+        self.display_all_displays()
+
+        serial_no = simpledialog.askstring("Serial Number", "Enter the serial number of the display to update:")
+        new_scheduler_system = simpledialog.askstring("New Scheduler System", "Enter the new scheduler system of the display:")
+
+        with closing(self.conn.cursor()) as c:
+            c.execute("UPDATE DigitalDisplay SET schedulerSystem = ? WHERE serialNo = ?", (new_scheduler_system, serial_no))
+            self.conn.commit()
+
+        self.display_all_displays()
+
+    def connect_to_database_gui(self):
+        database_name = simpledialog.askstring("Database Name", "Enter database name:")
+        self.conn = connect_to_database(database_name)
+
+    def quit_app(self):
+        if messagebox.askyesno("Quit", "Are you sure you want to quit?"):
+            if self.conn:
+                self.conn.close()
+            self.destroy()
+
+    def run(self):
+        self.connect_to_database_gui()
+        if self.conn is None:
+            messagebox.showerror("Error", "Failed to connect to the database.")
+            return
+        self.mainloop()
+
+if __name__ == '__main__':
+    app = DigitalDisplayApp()
+    app.run()
