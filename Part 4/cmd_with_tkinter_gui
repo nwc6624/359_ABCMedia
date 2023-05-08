@@ -16,7 +16,7 @@ class DigitalDisplayApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Digital Display Manager")
+        self.title("Digital Display Manager- Intended For ABC.sqlite")
         self.geometry("800x400")
 
         self.conn = None
@@ -46,8 +46,6 @@ class DigitalDisplayApp(tk.Tk):
 
 
 
-
-        ###############################################################################
 
     def display_all_displays(self):
         with closing(self.conn.cursor()) as c:
@@ -160,6 +158,12 @@ class DigitalDisplayApp(tk.Tk):
 if __name__ == '__main__':
     app = DigitalDisplayApp()
     app.run()
+
+
+
+
+
+
 
 
 
