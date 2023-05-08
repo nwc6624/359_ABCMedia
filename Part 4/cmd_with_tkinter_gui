@@ -3,6 +3,12 @@ from contextlib import closing
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 
+
+'''The connect_to_database function takes a database_name argument and tries to establish
+ a connection with an SQLite database with the given name. If successful, it prints a
+   success message and returns the connection object. If it fails, it prints an error message and returns None.'''
+
+
 def connect_to_database(database_name):
     try:
         conn = sqlite3.connect(database_name)
@@ -11,6 +17,12 @@ def connect_to_database(database_name):
     except sqlite3.Error as e:
         print(f"Failed to connect to database: {e}")
         return None
+
+
+'''The DigitalDisplayApp class inherits from tk.Tk and defines a GUI application with several buttons and a text widget.
+ The __init__ method initializes the application window with a title, geometry, and initializes the conn attribute to
+   None. The create_widgets method creates a frame for the buttons, creates the buttons, and a text widget to display
+     the results of the user's actions.'''
 
 class DigitalDisplayApp(tk.Tk):
     def __init__(self):
@@ -22,7 +34,15 @@ class DigitalDisplayApp(tk.Tk):
         self.conn = None
 
         self.create_widgets()
-
+    '''The create_widgets method creates the GUI elements for the application.
+ It creates a tk.Frame object and places it in the top left corner of the main window 
+ (self) using the grid method. It then creates six buttons inside this frame, one for each action
+   that can be performed by the user: display all digital displays, search for digital displays, insert a new digital display,
+     delete a digital display, update a digital display, and quit the application. Each button is created using the 
+     tk.Button method, with a text label and a command that specifies which method should be called when the button
+       is clicked. The buttons are then placed in the options frame using the grid method, with each button given a row
+         and column index. The sticky parameter specifies how the widget should align within its cell. The pady parameter
+    adds padding between the buttons.'''
     def create_widgets(self):
         options_frame = tk.Frame(self)
         options_frame.grid(row=0, column=0, padx=10, pady=10, sticky='ns')
@@ -43,7 +63,6 @@ class DigitalDisplayApp(tk.Tk):
     def display_result(self, text):
         self.result_text.delete(1.0, tk.END)
         self.result_text.insert(tk.END, text)
-
 
 
 
@@ -87,6 +106,9 @@ class DigitalDisplayApp(tk.Tk):
         scheduler_system = simpledialog.askstring("Scheduler System", "Enter the scheduler system of the display:")
         serial_no = simpledialog.askstring("Serial Number", "Enter the serial number of the display:")
 
+        '''The code is inserting new data into the DigitalDisplay table in the database using an SQL query, committing the changes, 
+and then calling the display_all_displays() method to update the display of all digital displays in the GUI. The with closing
+ statement is used to automatically close the cursor after executing the SQL query, to ensure that resources are properly released.'''
         with closing(self.conn.cursor()) as c:
             c.execute("""
                 INSERT INTO DigitalDisplay (serialNo, schedulerSystem, modelNo) VALUES (?, ?, ?)
@@ -148,18 +170,16 @@ class DigitalDisplayApp(tk.Tk):
                 self.conn.close()
             self.destroy()
 
-    def run(self):
+    def run(self):      
         self.connect_to_database_gui()
         if self.conn is None:
             messagebox.showerror("Error", "Failed to connect to the database.")
             return
         self.mainloop()
-
+''' #####################MAIN RUN#######################################'''
 if __name__ == '__main__':
     app = DigitalDisplayApp()
     app.run()
-
-
 
 
 
