@@ -17,7 +17,7 @@ class DigitalDisplayApp(tk.Tk):
         super().__init__()
 
         self.title("Digital Display Manager")
-        self.geometry("400x300")
+        self.geometry("800x400")
 
         self.conn = None
 
@@ -25,22 +25,37 @@ class DigitalDisplayApp(tk.Tk):
 
     def create_widgets(self):
         options_frame = tk.Frame(self)
-        options_frame.pack(pady=10)
+        options_frame.grid(row=0, column=0, padx=10, pady=10, sticky='ns')
 
-        tk.Button(options_frame, text="1. Display all the digital displays.", command=self.display_all_displays).pack(fill=tk.X, pady=2)
-        tk.Button(options_frame, text="2. Search digital displays given a scheduler system.", command=self.search_by_scheduler).pack(fill=tk.X, pady=2)
-        tk.Button(options_frame, text="3. Insert a new digital display.", command=self.insert_display).pack(fill=tk.X, pady=2)
-        tk.Button(options_frame, text="4. Delete a digital display.", command=self.delete_display).pack(fill=tk.X, pady=2)
-        tk.Button(options_frame, text="5. Update a digital display.", command=self.update_display).pack(fill=tk.X, pady=2)
-        tk.Button(options_frame, text="6. Quit.", command=self.quit_app).pack(fill=tk.X, pady=2)
+        tk.Button(options_frame, text="1. Display all the digital displays.", command=self.display_all_displays).grid(row=0, column=0, sticky='ew', pady=2)
+        tk.Button(options_frame, text="2. Search digital displays given a scheduler system.", command=self.search_by_scheduler).grid(row=1, column=0, sticky='ew', pady=2)
+        tk.Button(options_frame, text="3. Insert a new digital display.", command=self.insert_display).grid(row=2, column=0, sticky='ew', pady=2)
+        tk.Button(options_frame, text="4. Delete a digital display.", command=self.delete_display).grid(row=3, column=0, sticky='ew', pady=2)
+        tk.Button(options_frame, text="5. Update a digital display.", command=self.update_display).grid(row=4, column=0, sticky='ew', pady=2)
+        tk.Button(options_frame, text="6. Quit.", command=self.quit_app).grid(row=5, column=0, sticky='ew', pady=2)
+
+        # Create a Text widget to display the results
+        self.result_text = tk.Text(self, wrap=tk.WORD)
+        self.result_text.grid(row=0, column=1, padx=10, pady=10, sticky='nsew')
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+    def display_result(self, text):
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, text)
+
+
+
+
+        ###############################################################################
 
     def display_all_displays(self):
         with closing(self.conn.cursor()) as c:
             c.execute("SELECT * FROM DigitalDisplay")
             rows = c.fetchall()
 
-        for row in rows:
-            print(row)
+        result = '\n'.join(map(str, rows))
+        self.display_result(result)
 
         choice = messagebox.askyesno("Model Details", "Do you want to see the model details of a display?")
         if choice:
@@ -56,8 +71,8 @@ class DigitalDisplayApp(tk.Tk):
             """, (serial_no,))
             rows = c.fetchall()
 
-        for row in rows:
-            print(row)
+        result = '\n'.join(map(str, rows))
+        self.display_result(result)
 
     def search_by_scheduler(self):
         scheduler_system = simpledialog.askstring("Scheduler System", "Enter the scheduler system to search for:")
@@ -66,8 +81,8 @@ class DigitalDisplayApp(tk.Tk):
             c.execute("SELECT * FROM DigitalDisplay WHERE schedulerSystem = ?", (scheduler_system,))
             rows = c.fetchall()
 
-        for row in rows:
-            print(row)
+        result = '\n'.join(map(str, rows))
+        self.display_result(result)
 
     def insert_display(self):
         model_no = simpledialog.askstring("Model Number", "Enter the model number of the display:")
@@ -145,3 +160,8 @@ class DigitalDisplayApp(tk.Tk):
 if __name__ == '__main__':
     app = DigitalDisplayApp()
     app.run()
+
+
+
+
+
