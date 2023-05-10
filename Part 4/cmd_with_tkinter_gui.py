@@ -1,3 +1,14 @@
+
+"""   Date: 5/10/2023
+   Authors: Noah Caulfield
+            Matt Mitchell
+            
+            Intended for use with ABC.sqlite, or equivalent build version
+            
+            Designed for CS 359 Part 4 Final Project
+                        CMD_with_tkinter_gui.py                           """
+            
+
 import sqlite3
 from contextlib import closing
 import tkinter as tk
